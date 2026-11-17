@@ -1,0 +1,18 @@
+---
+pagination:
+  data: site.newsPages
+  size: 1
+  alias: p
+permalink: "{{ p.url }}"
+kind: news
+layout: base.njk
+---
+{%- set L = i18n[p.lang] -%}
+<h1>{{ p.title }}</h1>
+<div class="news-date">{{ p.date | dateFmt }}</div>
+<div class="sep"></div>
+<div class="prose news-body">
+  {% if p.image %}<img class="news-image" src="{{ p.image }}" width="240" alt="">{% endif %}
+  {{ p.body | md | safe }}
+</div>
+<p class="center-link"><a class="alls" href="{{ site.urls.news(p.lang) }}">{{ L.allNews }}</a></p>

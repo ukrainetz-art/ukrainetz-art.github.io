@@ -1,0 +1,44 @@
+---
+pagination:
+  data: site.galleryPages
+  size: 1
+  alias: p
+permalink: "{{ p.url }}"
+kind: gallery
+layout: base.njk
+---
+{%- set L = i18n[p.lang] -%}
+<h1 class="visually-hidden">{{ p.title }}</h1>
+<div class="gallery">
+  {%- for it in p.items %}
+  <figure class="holst">
+    <div class="lot">{{ L.lot }} {{ it.lot }}</div>
+    <a class="zoom" href="{{ it.image }}" data-title="{{ it.title }}" data-desc="{{ it.description }}">
+      <img src="{{ it.thumb }}" width="235" height="235" alt="{{ it.title }}" loading="{% if loop.index > 3 %}lazy{% else %}eager{% endif %}">
+    </a>
+    <figcaption>{{ it.title }}</figcaption>
+    <div class="mline">
+      <img class="mini" src="{{ it.thumb }}" alt="" height="30" width="30" loading="lazy">
+      {% if it.price > 0 %}<span class="cash">{{ it.price }} $</span>{% endif %}
+    </div>
+  </figure>
+  {%- endfor %}
+</div>
+
+{% if p.pagesCount > 1 %}
+<nav class="pages" aria-label="{{ L.pages }}">
+  {%- for pl in p.pageLinks %}
+  {% if pl.n == p.n %}<span class="page-act" aria-current="page">{{ pl.n }}</span>{% else %}<a class="page-item" href="{{ pl.url }}">{{ pl.n }}</a>{% endif %}
+  {%- endfor %}
+</nav>
+{% endif %}
+
+<div class="lightbox" hidden role="dialog" aria-modal="true" aria-label="{{ p.title }}">
+  <button type="button" class="lb-close" aria-label="{{ L.close }}">×</button>
+  <button type="button" class="lb-prev" aria-label="{{ L.prev }}">‹</button>
+  <figure>
+    <img alt="">
+    <figcaption><strong class="lb-title"></strong><span class="lb-desc"></span></figcaption>
+  </figure>
+  <button type="button" class="lb-next" aria-label="{{ L.next }}">›</button>
+</div>

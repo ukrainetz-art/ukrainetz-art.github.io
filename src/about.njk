@@ -1,0 +1,12 @@
+---
+pagination:
+  data: site.aboutPages
+  size: 1
+  alias: p
+permalink: "{{ p.url }}"
+kind: about
+layout: base.njk
+---
+<h1>{{ p.title }}</h1>
+<div class="sep"></div>
+<div class="prose">{{ p.body | md | safe }}</div>

@@ -1,0 +1,23 @@
+---
+pagination:
+  data: site.newsLists
+  size: 1
+  alias: p
+permalink: "{{ p.url }}"
+kind: news
+layout: base.njk
+titleKey: newsTitle
+---
+{%- set L = i18n[p.lang] -%}
+<h1>{{ L.newsTitle }}</h1>
+<div class="sep"></div>
+{%- for n in p.items %}
+<article class="news-item">
+  {% if n.image %}<a href="{{ n.url }}"><img class="news-thumb" src="{{ n.image }}" width="80" alt="" loading="lazy"></a>{% endif %}
+  <div>
+    <h2><a href="{{ n.url }}">{{ n.title }}</a></h2>
+    <div class="news-date">{{ n.date | dateFmt }}</div>
+    <p class="blog">{{ n.intro }}</p>
+  </div>
+</article>
+{%- endfor %}

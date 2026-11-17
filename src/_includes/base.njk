@@ -1,0 +1,66 @@
+{%- set L = i18n[p.lang] -%}
+{%- set pageTitle = p.title or (L[titleKey] if titleKey) or L.defaultTitle -%}
+<!DOCTYPE html>
+<html lang="{{ L.htmlLang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ pageTitle }}{% if kind != "gallery" %} | {{ L.defaultTitle }}{% endif %}</title>
+  <meta name="description" content="{{ p.description or L.defaultTitle }}">
+  {% if p.keywords %}<meta name="keywords" content="{{ p.keywords }}">{% endif %}
+  {%- for l in site.langs %}
+  <link rel="alternate" hreflang="{{ i18n[l].htmlLang }}" href="{{ p.alts[l] }}">
+  {%- endfor %}
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body class="page-{{ kind }}">
+<div class="wrap-line">
+  <header class="top">
+    <div class="top-main">
+      <div class="top-row">
+        <ul class="lang" aria-label="Language">
+          {%- for l in site.langs %}
+          <li>{% if l == p.lang %}<span class="lang-active">{{ i18n[l].langName }}</span>{% else %}<a href="{{ p.alts[l] }}" hreflang="{{ i18n[l].htmlLang }}">{{ i18n[l].langName }}</a>{% endif %}</li>
+          {%- endfor %}
+        </ul>
+        <div class="phones">
+          {%- for tel in site.settings.phones %}
+          <a class="tl" href="tel:{{ tel | replace(' ', '') | replace('(', '') | replace(')', '') | replace('-', '') }}">{{ tel }}</a>
+          {%- endfor %}
+        </div>
+      </div>
+      <a class="logo" href="{{ site.urls.gallery(p.lang) }}"><img src="/assets/img/logo_{{ p.lang }}.png" width="770" height="68" alt="{{ L.defaultTitle }}"></a>
+      <div class="tagline">{{ site.tagline[p.lang] }}</div>
+      <nav class="menu">
+        <a href="{{ site.urls.gallery(p.lang) }}"{% if kind == "gallery" %} class="active" aria-current="page"{% endif %}>{{ L.menu.gallery }}</a>
+        <a href="{{ site.urls.about(p.lang) }}"{% if kind == "about" %} class="active" aria-current="page"{% endif %}>{{ L.menu.about }}</a>
+        <a href="{{ site.urls.news(p.lang) }}"{% if kind == "news" %} class="active" aria-current="page"{% endif %}>{{ L.menu.news }}</a>
+        <a href="{{ site.urls.contact(p.lang) }}"{% if kind == "contact" %} class="active" aria-current="page"{% endif %}>{{ L.menu.contact }}</a>
+      </nav>
+    </div>
+    <a class="face" href="{{ site.urls.about(p.lang) }}"><img src="/assets/img/face.jpg" width="180" height="265" alt="{{ L.defaultTitle }}"></a>
+  </header>
+</div>
+
+<main class="center">
+  <div id="content">
+    {{ content | safe }}
+  </div>
+</main>
+
+<footer class="bottom">
+  <div class="in-bottom">
+    <div class="t-nums">
+      {%- for tel in site.settings.phones %}
+      <a class="t-num" href="tel:{{ tel | replace(' ', '') | replace('(', '') | replace(')', '') | replace('-', '') }}">{{ tel }}</a>
+      {%- endfor %}
+      {%- if site.settings.email %}<a class="t-mail" href="mailto:{{ site.settings.email }}">{{ site.settings.email }}</a>{% endif %}
+    </div>
+    <p>{{ L.copyright }} © 2015–{{ site.year }}. {{ L.rights }}<br>{{ L.concept }}</p>
+    <p class="lw">{{ L.legal }}</p>
+  </div>
+</footer>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

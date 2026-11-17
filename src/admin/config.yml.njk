@@ -1,0 +1,134 @@
+---
+permalink: /admin/config.yml
+eleventyExcludeFromCollections: true
+---
+{%- macro langs(widget) -%}
+[{ name: ua, label: "Українська", widget: {{ widget }}, required: false }, { name: en, label: "English", widget: {{ widget }}, required: false }, { name: de, label: "Deutsch", widget: {{ widget }}, required: false }]
+{%- endmacro -%}
+# Sveltia CMS configuration. Generated at build time:
+# the repository name and site address are filled in by GitHub Actions automatically.
+app_title: "Админка — Валентин Украинец"
+backend:
+  name: github
+  repo: {{ site.repo }}
+  branch: {{ site.branch }}
+  auth_methods: [token]
+  commit_messages:
+    create: "Добавлено: {{ '{{' }}collection{{ '}}' }} «{{ '{{' }}slug{{ '}}' }}»"
+    update: "Изменено: {{ '{{' }}collection{{ '}}' }} «{{ '{{' }}slug{{ '}}' }}»"
+    delete: "Удалено: {{ '{{' }}collection{{ '}}' }} «{{ '{{' }}slug{{ '}}' }}»"
+    uploadMedia: "Загружен файл {{ '{{' }}path{{ '}}' }}"
+    deleteMedia: "Удалён файл {{ '{{' }}path{{ '}}' }}"
+{%- if site.siteUrl %}
+site_url: {{ site.siteUrl }}
+display_url: {{ site.siteUrl }}
+{%- endif %}
+
+media_folder: src/media/uploads
+public_folder: /media/uploads
+media_libraries:
+  default:
+    config:
+      slugify_filename: true
+      max_file_size: 26214400
+      transformations:
+        raster_image:
+          format: webp
+          quality: 85
+          width: 1600
+          height: 1600
+
+collections:
+  - name: paintings
+    label: "Картины"
+    label_singular: "Картина"
+    description: "Галерея. Сортировка на сайте — по номеру лота, от большего к меньшему (новые сверху)."
+    folder: src/content/paintings
+    extension: yml
+    format: yml
+    create: true
+    delete: true
+    identifier_field: lot
+    slug: "{{ '{{' }}lot{{ '}}' }}"
+    summary: "{{ '{{' }}lot{{ '}}' }} — {{ '{{' }}title.ua{{ '}}' }}"
+    sortable_fields: [lot]
+    thumbnail: thumb
+    media_folder: /src/media/paintings
+    public_folder: /media/paintings
+    fields:
+      - { name: lot, label: "Номер лота", widget: string, hint: "Например 0350. Чем больше номер, тем выше картина в галерее." }
+      - { name: published, label: "Показывать на сайте", widget: boolean, default: true }
+      - name: title
+        label: "Название и размер"
+        hint: "Например: Старий млин, 30 х 45 см"
+        widget: object
+        fields: {{ langs('string') }}
+      - name: description
+        label: "Описание (показывается при увеличении картины)"
+        widget: object
+        collapsed: true
+        fields: {{ langs('text') }}
+      - { name: price, label: "Цена, $ (0 — не показывать)", widget: number, value_type: int, default: 0, min: 0, required: false }
+      - { name: image, label: "Картина (большое фото)", widget: image }
+      - { name: thumb, label: "Квадратная миниатюра (необязательно)", widget: image, required: false, hint: "Если пусто, миниатюра вырежется из большого фото автоматически." }
+
+  - name: news
+    label: "Новости"
+    label_singular: "Новость"
+    folder: src/content/news
+    extension: yml
+    format: yml
+    create: true
+    delete: true
+    identifier_field: title.ua
+    slug: "{{ '{{' }}year{{ '}}' }}-{{ '{{' }}month{{ '}}' }}-{{ '{{' }}day{{ '}}' }}-{{ '{{' }}hour{{ '}}' }}{{ '{{' }}minute{{ '}}' }}"
+    summary: "{{ '{{' }}date{{ '}}' }} — {{ '{{' }}title.ua{{ '}}' }}"
+    sortable_fields: [date]
+    thumbnail: image
+    media_folder: /src/media/news
+    public_folder: /media/news
+    fields:
+      - { name: slug, label: "Адрес (служебное)", widget: hidden }
+      - { name: date, label: "Дата", widget: datetime, format: "YYYY-MM-DD", date_format: "DD.MM.YYYY", time_format: false }
+      - { name: published, label: "Показывать на сайте", widget: boolean, default: true }
+      - { name: image, label: "Картинка", widget: image, required: false }
+      - name: title
+        label: "Заголовок"
+        widget: object
+        fields: {{ langs('string') }}
+      - name: intro
+        label: "Краткий текст (для списка новостей)"
+        widget: object
+        fields: {{ langs('text') }}
+      - name: body
+        label: "Полный текст"
+        widget: object
+        fields: {{ langs('markdown') }}
+
+  - name: pages
+    label: "Страницы и настройки"
+    files:
+      - name: about
+        label: "О художнике"
+        file: src/content/about.yml
+        format: yml
+        media_folder: /src/media/news
+        public_folder: /media/news
+        fields:
+          - { name: title, label: "Заголовок", widget: object, fields: {{ langs('string') }} }
+          - { name: description, label: "Описание для поисковиков", widget: object, collapsed: true, fields: {{ langs('string') }} }
+          - { name: body, label: "Текст", widget: object, fields: {{ langs('markdown') }} }
+      - name: settings
+        label: "Контакты и настройки сайта"
+        file: src/content/settings.yml
+        format: yml
+        fields:
+          - { name: phones, label: "Телефоны", widget: list, field: { name: phone, label: "Телефон", widget: string } }
+          - { name: email, label: "E-mail для связи (необязательно)", widget: string, required: false }
+          - { name: form_endpoint, label: "Адрес формы обратной связи (Formspree)", widget: string, required: false, hint: "Например https://formspree.io/f/abcdwxyz. Если пусто — на странице контактов только телефоны и e-mail." }
+          - { name: per_page, label: "Картин на одной странице галереи", widget: number, value_type: int, default: 9, min: 3 }
+          - { name: tagline, label: "Подзаголовок в шапке", widget: object, fields: {{ langs('string') }} }
+          - { name: home_title, label: "Заголовок главной страницы (вкладка браузера)", widget: object, collapsed: true, fields: {{ langs('string') }} }
+          - { name: home_description, label: "Описание для поисковиков", widget: object, collapsed: true, fields: {{ langs('string') }} }
+          - { name: keywords, label: "Ключевые слова", widget: object, collapsed: true, fields: {{ langs('string') }} }
+          - { name: contact_intro, label: "Текст над формой обратной связи", widget: object, collapsed: true, fields: {{ langs('string') }} }

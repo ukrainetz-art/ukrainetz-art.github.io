@@ -1,0 +1,41 @@
+---
+pagination:
+  data: site.contactPages
+  size: 1
+  alias: p
+permalink: "{{ p.url }}"
+kind: contact
+layout: base.njk
+titleKey: contactTitle
+---
+{%- set L = i18n[p.lang] -%}
+{%- set S = site.settings -%}
+<h1>{{ L.contactTitle }}</h1>
+<div class="sep"></div>
+
+<div class="contact-cards">
+  <div>
+    <h2>{{ L.phones }}</h2>
+    {%- for tel in S.phones %}
+    <p><a class="contact-big" href="tel:{{ tel | replace(' ', '') | replace('(', '') | replace(')', '') | replace('-', '') }}">{{ tel }}</a></p>
+    {%- endfor %}
+  </div>
+  {% if S.email %}
+  <div>
+    <h2>{{ L.email }}</h2>
+    <p><a class="contact-big" href="mailto:{{ S.email }}">{{ S.email }}</a></p>
+  </div>
+  {% endif %}
+</div>
+
+{% if S.form_endpoint %}
+<p>{{ p.intro }}</p>
+<form class="contact-form" method="post" action="{{ S.form_endpoint }}" data-ok="{{ L.sent }}" data-err="{{ L.sendError }}">
+  <label><span>{{ L.name }}</span><input type="text" name="name" required autocomplete="name"></label>
+  <label><span>{{ L.email }}</span><input type="email" name="email" required autocomplete="email"></label>
+  <label><span>{{ L.message }}</span><textarea name="message" rows="7" required></textarea></label>
+  <input type="text" name="_gotcha" class="visually-hidden" tabindex="-1" autocomplete="off">
+  <div><button type="submit" class="button">{{ L.send }}</button></div>
+  <p class="form-status" role="status"></p>
+</form>
+{% endif %}

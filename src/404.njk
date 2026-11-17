@@ -1,0 +1,14 @@
+---
+permalink: /404.html
+kind: notfound
+layout: base.njk
+p:
+  lang: ua
+  title: "404"
+  alts: { ua: "/", en: "/en/", de: "/de/" }
+---
+<h1>404</h1>
+<div class="sep"></div>
+{%- for l in site.langs %}
+<p lang="{{ i18n[l].htmlLang }}">{{ i18n[l].notFound }} — <a href="{{ site.urls.gallery(l) }}">{{ i18n[l].toHome }}</a></p>
+{%- endfor %}

@@ -1,0 +1,15 @@
+{
+  "name": "painter-site",
+  "private": true,
+  "description": "Сайт художника Валентина Украинца (Eleventy + Sveltia CMS)",
+  "type": "module",
+  "scripts": {
+    "build": "eleventy",
+    "start": "eleventy --serve"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "3.1.7",
+    "js-yaml": "4.1.0",
+    "markdown-it": "14.1.0"
+  }
+}
